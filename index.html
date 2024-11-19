@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzaria Deliciosa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .pizza-gallery {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .pizza-item {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            text-align: center;
+        }
+
+        .pizza-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .pizza-item h3 {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .pizza-item p {
+            font-size: 1em;
+            margin: 5px 0;
+        }
+
+        .pizza-item .size-options {
+            margin-top: 10px;
+        }
+
+        .pizza-item .price {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        #uploadSection {
+            margin-top: 30px;
+            display: none;
+        }
+
+        input[type="file"], input[type="password"], textarea, select {
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Pizzaria Deliciosa</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Menu</a></li>
+                <li><a href="#">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="pizza-gallery">
+            <div class="pizza-item" id="pizza1">
+                <img src="" alt="Pizza 1" id="pizza1-img" ondblclick="showUploadForm('pizza1')">
+                <h3>Pizza Margherita</h3>
+                <p>Sabor: Molho de tomate, queijo, manjericão</p>
+                <div class="size-options">
+                    <p>Tamanho:</p>
+                    <select id="size1" onchange="updatePrice('pizza1')">
+                        <option value="25">Pequena - R$ 25,00</option>
+                        <option value="35">Média - R$ 35,00</option>
+                        <option value="45">Grande - R$ 45,00</option>
+                    </select>
+                </div>
+                <div class="price" id="price1">A partir de R$ 25,00</div>
+            </div>
+            <div class="pizza-item" id="pizza2">
+                <img src="" alt="Pizza 2" id="pizza2-img" ondblclick="showUploadForm('pizza2')">
+                <h3>Pizza Calabresa</h3>
+                <p>Sabor: Calabresa, queijo, cebola, molho</p>
+                <div class="size-options">
+                    <p>Tamanho:</p>
+                    <select id="size2" onchange="updatePrice('pizza2')">
+                        <option value="30">Pequena - R$ 30,00</option>
+                        <option value="40">Média - R$ 40,00</option>
+                        <option value="50">Grande - R$ 50,00</option>
+                    </select>
+                </div>
+                <div class="price" id="price2">A partir de R$ 30,00</div>
+            </div>
+            <div class="pizza-item" id="pizza3">
+                <img src="" alt="Pizza 3" id="pizza3-img" ondblclick="showUploadForm('pizza3')">
+                <h3>Pizza Portuguesa</h3>
+                <p>Sabor: Presunto, queijo, ovo, azeitona, cebola</p>
+                <div class="size-options">
+                    <p>Tamanho:</p>
+                    <select id="size3" onchange="updatePrice('pizza3')">
+                        <option value="35">Pequena - R$ 35,00</option>
+                        <option value="45">Média - R$ 45,00</option>
+                        <option value="55">Grande - R$ 55,00</option>
+                    </select>
+                </div>
+                <div class="price" id="price3">A partir de R$ 35,00</div>
+            </div>
+        </section>
+
+        <section id="uploadSection">
+            <h2>Alterar Imagem</h2>
+            <label for="password">Digite a senha:</label>
+            <input type="password" id="password" placeholder="Senha">
+            <br>
+            <input type="file" id="imageUpload" accept="image/*">
+            <button onclick="uploadImage()">Upload</button>
+            <div id="message"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Pizzaria Deliciosa | Todos os direitos reservados</p>
+    </footer>
+
+    <script>
+        let currentPizzaId = '';
+        const password = 'senhaUnica123';
+
+        function loadImages() {
+            const pizzas = ['pizza1', 'pizza2', 'pizza3'];
+
+            pizzas.forEach((pizza) => {
+                const imageSrc = localStorage.getItem(pizza);
+                if (imageSrc) {
+                    document.getElementById(`${pizza}-img`).src = imageSrc;
+                }
+            });
+        }
+
+        function showUploadForm(pizzaId) {
+            currentPizzaId = pizzaId;
+            document.getElementById('uploadSection').style.display = 'block';
+        }
+
+        function uploadImage() {
+            const fileInput = document.getElementById('imageUpload');
+            const passwordInput = document.getElementById('password');
+            const messageDiv = document.getElementById('message');
+            const file = fileInput.files[0];
+
+            if (passwordInput.value !== password) {
+                messageDiv.innerHTML = '<p>Senha incorreta. Tente novamente.</p>';
+                messageDiv.style.color = 'red';
+                return;
+            }
+
+            if (!file) {
+                messageDiv.innerHTML = '<p>Por favor, selecione uma imagem para enviar.</p>';
+                messageDiv.style.color = 'red';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                localStorage.setItem(currentPizzaId, e.target.result);
+                document.getElementById(`${currentPizzaId}-img`).src = e.target.result;
+                fileInput.value = '';
+                passwordInput.value = '';
+                document.getElementById('uploadSection').style.display = 'none';
+                messageDiv.innerHTML = '<p>Imagem alterada com sucesso!</p>';
+                messageDiv.style.color = 'green';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updatePrice(pizzaId) {
+            const sizeSelect = document.getElementById('size' + pizzaId.charAt(pizzaId.length - 1));
+            const price = sizeSelect.value;
+            document.getElementById('price' + pizzaId.charAt(pizzaId.length - 1)).innerText = `A partir de R$ ${price},00`;
+        }
+
+        window.onload = loadImages;
+    </script>
+</body>
+</html>
